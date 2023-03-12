@@ -1,0 +1,107 @@
+<ng-container>
+  <div #container class="wrapper-mobile">
+    <div *ngIf="!show.form" class="content-wrapper slide-top">
+      <h4>Kemudahan Menghitung Diskon Saat Split Bill</h4>
+
+      <button class="btn button-custom" (click)="show.form = true" >
+        <span>Mulai</span>
+        <span>
+          <fa-icon [icon]="'arrow-right'"></fa-icon>
+        </span>
+      </button>
+    </div>
+    <div *ngIf="show.form" [formGroup]="form" class="form-wrapper slide-top">
+      <div *ngIf="show['layout'] === null" class="field-wrapper">
+        <label>Berapa Jumlah Teman yang Ikut Split Bill</label>
+        <div class="input-custom">
+          <input formControlName="total_split" type="number">
+        </div>
+      </div>
+
+      <ng-container>
+        <div formArrayName="total_person">
+          <div *ngFor="let personForm of Person.controls; let iPerson = index">
+            <div [formGroupName]="iPerson">
+              <ng-container *ngIf="show['layout'] === iPerson && !show.final_step">
+                <div class="slide-top">
+                  <div class="field-wrapper">
+                    <label>Nama teman {{ iPerson + 1 }} yang ikut patungan</label>
+                    <div class="input-custom">
+                      <input [formControlName]="'name'">
+                    </div>
+                  </div>
+
+                  <div class="field-wrapper">
+                    <label>Jumlah Harga Pembelian</label>
+                    <div class="input-custom">
+                      <input [formControlName]="'paying'">
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+
+
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="show.final_step && !show.result">
+        <div class="slide-top">
+          <div class="field-wrapper">
+            <label>Harga Ongkir</label>
+            <div class="input-custom">
+              <input [formControlName]="'delivery_price'">
+            </div>
+          </div>
+
+          <div class="field-wrapper">
+            <label>Total Diskon</label>
+            <div class="input-custom">
+              <input [formControlName]="'discount'">
+            </div>
+          </div>
+
+          <div class="field-wrapper">
+            <label>Biaya Order</label>
+            <div class="input-custom">
+              <input [formControlName]="'payment'">
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="show.result">
+        <table class="table-result slide-top">
+          <thead>
+            <th>Nama</th>
+            <th>Total yg harus dibayar</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of Person.value; let iItem = index">
+              <td>{{ item.name }}</td>
+              <td>{{ formatterCurrency(item.total_price)}}</td>
+            </tr>
+            <tr class="row-results">
+              <td></td>
+              <td>{{ formatterCurrency(result)}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </ng-container>
+
+      <div class="action-field">
+        <button *ngIf="!show.final_step" class="btn button-icon" (click)="addForm()">
+          <fa-icon *ngIf="!process.submit" style="font-size: 2.4em" [icon]="'arrow-right'"></fa-icon>
+          <fa-icon *ngIf="process.submit" style="font-size: 2.4em" [icon]="'circle-notch'"></fa-icon>
+        </button>
+
+        <button *ngIf="show.final_step && !show.result" class="btn button-custom" (click)="onSubmit()">
+          <span>Proses</span>
+        </button>
+      </div>
+    </div>
+    <img class="img-background" src="../../assets/images/background-illustration.png" alt="backround">
+  </div>
+</ng-container>
